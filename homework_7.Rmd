@@ -1,0 +1,58 @@
+---
+title: "Homework 7"
+author: "Fabian Bergweiler"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Global Pupulation by Country
+
+
+```{r url}
+url <- "https://www.worldometers.info/world-population/population-by-country/"
+# scrape the website
+url_html <- read_html(url)
+```
+
+
+
+```{r srape rows}
+whole_table <- url_html %>% 
+ html_nodes("table") %>%
+ html_table()  #str(whole_table) turns out to be a list
+str(whole_table)
+whole_table[[1]]
+whole_table
+```
+
+```{r html-to-df}
+new_table <- do.call(cbind,unlist(whole_table, recursive = FALSE)) 
+head(new_table)
+```
+
+```{r view}
+view(new_table)
+```
+
+
+```{r clean-data}
+new_table <- as_tibble(new_table)
+str(new_table)
+```
+
+
+```{r plot}
+# Countries by World Share
+top10 <-  new_table %>%
+  rename(`World 
+          Share` = "share")
+  mutate(share = as.numeric(share))
+  arrange(share) %>%
+  top_n(10)
+```
+
+I stop here, I tried to get the World Share column renamed. Originally, I wanted to grap the first ten items of that column and store it in a variable that I can then use for plotting. 
